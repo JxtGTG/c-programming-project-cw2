@@ -54,6 +54,7 @@ void store(FILE* file,int *cells[]){
     for(int i=0;i<High;i++){
         for(int j=0;j<Width;j++){      
             fprintf(file,"%d",cells[i][j]);
+            int h;
         }
     }
 }
