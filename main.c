@@ -1,5 +1,5 @@
 #include<stdio.h>
-
+#include"myutility.h"
 
  
 
@@ -11,7 +11,7 @@ int * load(FILE* file){
     char buff[100];
     int High;
     int Width;
-  char c;
+    char c;
      if (file == NULL ){
     printf("Error\nBook file does not exist");
 	return 1;
@@ -21,8 +21,6 @@ int * load(FILE* file){
     if(c!=EOF){
         rewind(file);
 
-    
-    	
     fgets(buff,100,file);
     sscanf(buff,"%d",High);
 
@@ -30,18 +28,68 @@ int * load(FILE* file){
     sscanf(buff,"%d",Width);
     int cells[High][Width];
         
-       
 	for(int i=0;i<High;i++){
         for(int j=0;j<Width;j++){
             c=fgetc(file);
             sscanf(c,"%d",cells[i][j]);
         }
     }
+    printf("Previous world loaded successfully\n");
     return cells;
     }
     else{
-        printf("File is empty\n");
-        return 0;
+        int a=0;
+        int x;
+        int b=0;
+        printf("File is empty\nPlease input the initial size\n");
+        while(a==0){
+        printf("Please input the height of the world\nHeight:\n");
+        x=optionChoice;
+        if(x==-1){
+       printf("\n You should input an Integer \n");
+       continue;
+        }
+        if(x<=1){
+            printf("\n Height should be larger than 1 \n");
+            continue;
+        }
+        a=1;
+        High=x;
+        }
+         while(b==0){
+        printf("Please input the width of the world\nWidth:\n");
+        x=optionChoice;
+        if(x==-1){
+       printf("\n You should input an Integer \n");
+       continue;
+        }
+        if(x<=1){
+            printf("\n Width should be larger than 1 \n");
+            continue;
+        }
+        b=1;
+        Width=x;
+        }
+        int cells[High][Width];
+        int d=0;
+        
+        for(int z=0;z<High;z++){
+           printf("Please input the cells state for the row %d\n",z+1);
+           printf("Notice:0 for dead and 1 for alive,you can choose to input like \"11011\" or \"1 0 1 0 1\"\n");
+           scanf("%[^\n]",buff);
+           getchar();
+           if(strlen(buff)!=Width){
+               printf("please input %d numbers\n",Width);
+           }
+           for(int i=0;i<strlen(buff);i++){
+               if(s)
+           }
+        
+        }
+        printf("\n World created successfully \n");
+        
+
+        return cells;
     }
 
 }
@@ -54,7 +102,7 @@ void store(FILE* file,int *cells[]){
     for(int i=0;i<High;i++){
         for(int j=0;j<Width;j++){      
             fprintf(file,"%d",cells[i][j]);
-            int h;
+            
         }
     }
 }
