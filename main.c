@@ -4,11 +4,83 @@
 #include <string.h>
 #include <windows.h>
 #include <ctype.h>
+#include <SDL2/SDL.h>
+
 #define terminate 0
 #define still 1
+#define delay 100
 
 int Width;
 int High;
+SDL_Renderer* renderer = NULL;
+SDL_Window *window = NULL;
+
+SDL_Texture* Texture = NULL;
+SDL_Texture* Texture2 = NULL;
+SDL_Surface* surface=NULL;
+
+void init(){
+ if (SDL_Init(SDL_INIT_VIDEO) != 0) 
+        fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
+    
+    atexit(SDL_Quit); // set for clean-up on exit
+    SDL_CreateWindowAndRenderer(Width*100, High*100, 0, &window, &renderer);
+    SDL_SetWindowTitle( window, "Circles eat squares");
+    surface = SDL_CreateRGBSurface(0, Width*100, High*100, 32, 255, 255, 255, 255);
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+}
+
+
+
+
+
+void show(int **cells)
+{
+    SDL_Rect rect;
+    rect.x=0;
+    rect.y=0;
+    rect.h=100;
+    rect.w=100;
+    for(int i=0;i<High;i++){
+        for(int j=0;j<Width;j++){
+            if(cells[i][j]==0){
+           
+            SDL_FillRect(surface,&rect, SDL_MapRGB(surface->format, 255, 0, 0));
+            printf("fuck");
+            Texture = SDL_CreateTextureFromSurface(renderer,surface);
+             printf("fuck");
+             SDL_RenderCopy(renderer, Texture, NULL, &rect);
+            //    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            //    SDL_RenderFillRect(renderer, &rect);
+            //    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+            //    SDL_RenderDrawRect(renderer, &rect);
+           
+               rect.x+=100;
+               
+            }
+            if(cells[i][j]==1){
+                // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                // SDL_RenderFillRect(renderer, &rect);
+                //  SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+                //  SDL_RenderDrawRect(renderer, &rect);
+            SDL_FillRect(surface, &rect, SDL_MapRGB(surface->format, 255, 255, 255));
+            Texture2 = SDL_CreateTextureFromSurface(renderer,surface);
+             SDL_RenderCopy(renderer, Texture2, NULL, &rect);
+                rect.x+=100;
+
+                
+            }
+        }
+        rect.x=0;
+        rect.y+=100;
+    }
+    SDL_RenderPresent(renderer);
+    SDL_Delay(delay);
+    return;
+}
+
 
 int ** copy(int **cells){
     int **my;
@@ -46,7 +118,7 @@ void updateWithoutInput(int **cells)
     int li,lj;
     int lx[8]={1,-1,0,0,1,-1,-1,1};
     int ly[8]={0,0,1,-1,1,-1,1,-1};
-    int NeibourNumber;
+   
     int temp[High][Width];
     for(i=0;i<High;i++)
     {
@@ -131,23 +203,23 @@ void  delete(char *str)
 }
  
 
-void show(int **cells)     
-{
+// void show(int **cells)     
+// {
     
-    int i,j;
-    for(i=0;i<High;i++)
-    {
-        for(j=0;j<Width;j++)
-        {
-            if(cells[i][j]==1)
-                printf("*");
-            else
-                printf(".");
-        }
-        printf("\n");
-    }
-    Sleep(500);            
-}
+//     int i,j;
+//     for(i=0;i<High;i++)
+//     {
+//         for(j=0;j<Width;j++)
+//         {
+//             if(cells[i][j]==1)
+//                 printf("*");
+//             else
+//                 printf(".");
+//         }
+//         printf("\n");
+//     }
+//     Sleep(500);            
+// }
 
 int **create(){
     char buff[100];
@@ -216,8 +288,8 @@ int **create(){
                continue;
            }
            else{
-               char *p;
-               char m;
+              
+               
               
                for(int k=0;k<Width;k++){
                    c=buff[k];
@@ -283,6 +355,7 @@ int ** load(FILE* file){
     
     while(j==0){
     printf("previous world:\n");
+    init();
     show(cells);
     if(y==0){
         printf("This world is terminated\n");
@@ -450,7 +523,7 @@ int ** load(FILE* file){
                continue;
            }
            else{
-               char *p;
+              
                char m;
               
                for(int k=0;k<Width;k++){
@@ -467,7 +540,7 @@ int ** load(FILE* file){
         printf("\nWorld created successfully \n");
         return cells;
     }
-
+    return NULL;
 }
 
 
@@ -629,11 +702,12 @@ int  game(FILE* file,int ** cell){
           
          }
      }
-
+   return 1;
 }
 
 void  game2(char * filename){
     FILE *file=fopen("my.txt","r+");
+   
     int **cell=load(file);
     fclose(file);
     FILE *close=fopen("my.txt","w");
@@ -642,7 +716,7 @@ void  game2(char * filename){
     int a;
      while(1){
          a=0;
-        
+        init();
         result=game(file,cell);
         if(result==terminate){
             while(a==0){
@@ -720,7 +794,9 @@ void  game2(char * filename){
 
 int main(int argc, char **argv)
 {
+    
     char user[100]="my.txt";
     // strcpy(user,argv[1]);
     game2(user);
+    return 0;
 }
