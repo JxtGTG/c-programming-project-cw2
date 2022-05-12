@@ -77,9 +77,12 @@ void updateWithoutInput(int **cells)
 
 
 void freecell(int **cells){
-       for(int i = 0; i < High; i++){
+    
+    for(int i = 0; i < High; i++){
+         
 		free(cells[i]);
 	}
+  
     free(cells);
 }
 
@@ -157,7 +160,7 @@ int **create(){
         printf("Please input the height of the world\nHeight:");
         x=optionChoice();
         if(x==-1){
-       printf("\n You should input an Integer \n");
+       printf("\n You should input an Integer larger than 1 \n");
        continue;
         }
         if(x<=1){
@@ -171,7 +174,7 @@ int **create(){
         printf("Please input the width of the world\nWidth:");
         x=optionChoice();
         if(x==-1){
-       printf("\n You should input an Integer \n");
+       printf("\n You should input an Integer larger than 1 \n");
        continue;
         }
         if(x<=1){
@@ -290,7 +293,7 @@ int ** load(FILE* file){
     m=optionChoice();
     
     if(m==-1){
-             printf("\nYou should input an Integer\n\n");
+             printf("\nYou should input 0 or 1\n\n");
                 }
                 else if(m!=0&&m!=1){
                     printf("please input 0 or 1\n\n");
@@ -310,7 +313,7 @@ int ** load(FILE* file){
         printf("Please input the height of the world\nHeight:");
         x=optionChoice();
         if(x==-1){
-       printf("\n You should input an Integer \n");
+       printf("\n You should input an Integer larger than 1\n");
        continue;
         }
         if(x<=1){
@@ -324,7 +327,7 @@ int ** load(FILE* file){
         printf("Please input the width of the world\nWidth:");
         x=optionChoice();
         if(x==-1){
-       printf("\n You should input an Integer \n");
+       printf("\n You should input an Integer larger than 1\n");
        continue;
         }
         if(x<=1){
@@ -391,7 +394,7 @@ int ** load(FILE* file){
         printf("Please input the height of the world\nHeight:");
         x=optionChoice();
         if(x==-1){
-       printf("\n You should input an Integer \n");
+       printf("\n You should input an Integer larger than 1 \n");
        continue;
         }
         if(x<=1){
@@ -405,7 +408,7 @@ int ** load(FILE* file){
         printf("Please input the width of the world\nWidth:");
         x=optionChoice();
         if(x==-1){
-       printf("\n You should input an Integer \n");
+       printf("\n You should input an Integer larger than 1 \n");
        continue;
         }
         if(x<=1){
@@ -452,8 +455,8 @@ int ** load(FILE* file){
               
                for(int k=0;k<Width;k++){
                    m=buff[k];
-                   p=&m;
-                   cells[z][k]=(int)atoi(p);
+                   
+                   cells[z][k]=m-'0';
                    
                }
                break;
@@ -493,7 +496,7 @@ void startup(int **cells)
 
 int  game(FILE* file,int ** cell){
    int **last=NULL;
-    
+    int **my;
    int q;
     int d;
     
@@ -554,7 +557,7 @@ int  game(FILE* file,int ** cell){
          printf("Please input the number of evolution:");
           x=optionChoice();
           if(x==-1){
-       printf("\nYou should input a digit \n\n");
+       printf("\nYou should input an integer larger than 0 \n\n");
             continue;
           }
           else if(x<=0){
@@ -581,7 +584,7 @@ int  game(FILE* file,int ** cell){
                 printf("Do you want to show the next steps?(input 0 for quit and 1 for continue)\n");
                 z=optionChoice();
                 if(z==-1){
-             printf("\n You should input an Integer\n\n");
+             printf("\nplease input 0 or 1\n\n");
                 }
                 else if(z!=0&&z!=1){
                     printf("please input 0 or 1\n\n");
@@ -591,7 +594,7 @@ int  game(FILE* file,int ** cell){
                 }
                 else if(z==0){
                  printf("The world is terminated\n");
-                      free(last);
+                      freecell(last);
                   return terminate;
                 }
                 }
@@ -600,22 +603,26 @@ int  game(FILE* file,int ** cell){
           
            printf("step %d:\n",i+1);
            show(cell);
-           free(last);
+           freecell(last);
            last=copy(cell);
            if(i!=x-1){
            printf("\n");        
            }
            else{
                printf("The step is up\n");
-               updateWithoutInput(cell);
-               d=judge(cell,last);
-               cell=copy(last);
+               my=copy(cell);
+               updateWithoutInput(my);
+               d=judge(my,last);
+               
+                
                if(d==0){
-                   free(last);
+                   freecell(my);
+                   freecell(last);
                    return terminate;
                }
                else{
-                    free(last);
+                  freecell(my);
+                   freecell(last);
                    return still;
                }
            }
@@ -632,9 +639,10 @@ void  game2(char * filename){
     FILE *close=fopen("my.txt","w");
     int result;
     int x;
-    int a=0;
+    int a;
      while(1){
          a=0;
+        
         result=game(file,cell);
         if(result==terminate){
             while(a==0){
@@ -643,7 +651,7 @@ void  game2(char * filename){
             printf("Choice:");
              x=optionChoice();
           if(x==-1){
-            printf("\nYou should input a digit \n\n");
+            printf("\nplease input 0 or 1\n\n");
                   continue;
              }
              else if(x!=0&&x!=1){
@@ -657,7 +665,7 @@ void  game2(char * filename){
         if(x==0){
              printf("\nGame closed,Bye Bye\n");
              store(close,cell);
-             free(cell);
+             freecell(cell);
              fclose(close);
              return;
         }
@@ -670,25 +678,29 @@ void  game2(char * filename){
         if(result==still){
             while(a==0){
              printf("This world is not terminated\n");           
-             printf("Please choose an option\n 1)Quit the game\n2)Still use it for another game\n3)Create a new world");
+             printf("Please choose an option\n1)Quit the game\n2)Still use it for another game\n3)Create a new world\n");
              printf("Choice:");
              x=optionChoice();
              if(x==-1){
-            printf("\nYou should input a digit \n\n");
+            printf("\nPlease input 1 or 2 or 3\n\n");
                   continue;
              }
              else if(x==1){
                 printf("\nGame closed,Bye Bye\n\n");
+                
                  store(close,cell);
-                 free(cell);
+               
+                 freecell(cell);
+                
                  fclose(close);
                   return;
              }
-             else if(x==2){    
+             else if(x==2){  
+                
                  a=1;
              }
              else if(x==3){
-                  free(cell);
+                freecell(cell);
                 cell=create();   
                 a=1;
              }
