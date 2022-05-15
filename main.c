@@ -81,7 +81,7 @@ void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTextur
      SDL_SetRenderTarget(sdlRenderer, NULL);		// 恢复默认渲染目标,将要渲染的目标设置为默认窗口
 	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL)	;	// 将纹理数据复制给渲染器
     SDL_RenderPresent(sdlRenderer);
-    SDL_Delay(1500);
+    // SDL_Delay();
 
 }
 
@@ -194,7 +194,6 @@ void close(SDL_Window* sdlWindow,SDL_Texture*sdlTexture,SDL_Renderer * sdlRender
     SDL_DestroyTexture(sdlTexture);			// 释放纹理
 	SDL_DestroyRenderer(sdlRenderer);		// 释放渲染器
 	SDL_DestroyWindow(sdlWindow);			// 释放窗口
-
 }
     
 
@@ -214,28 +213,134 @@ void  delete(char *str)
 }
  
 
-// void show(int **cells)     
-// {
-    
-//     int i,j;
-//     for(i=0;i<High;i++)
-//     {
-//         for(j=0;j<Width;j++)
-//         {
-//             if(cells[i][j]==1)
-//                 printf("*");
-//             else
-//                 printf(".");
-//         }
-//         printf("\n");
-//     }
-//     Sleep(500);            
-// }
+void changeblack(int x,int y,int**cells){
+    if(cells[x][y]==0){
+        cells[x][y]=1;
+    }
+   
+}
+void changewhite(int x,int y,int**cells){
+    if(cells[x][y]==1){
+        cells[x][y]=0;
+    }
+  
+}
 
-int **create(){
-    char buff[100];
-    char c;
-     int a=0;
+
+
+
+int **click_create(){
+    
+    bool quit=TRUE;
+    SDL_Init(SDL_INIT_EVERYTHING);
+
+	// 创建窗口
+	SDL_Window *sdlWindow = SDL_CreateWindow("drawRandRect",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*100, High*100, SDL_WINDOW_SHOWN);
+
+
+	// 创建渲染器
+	SDL_Renderer *sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+
+
+	// 创建纹理
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
+	SDL_Event event;
+     int **cell;
+       cell = (int **)malloc(High * sizeof(int *));
+	for(int i = 0; i < High; i++){
+		cell[i] = (int *)malloc(Width * sizeof(int));
+	}
+    for(int i=0;i<High;i++){
+        for(int j=0;j<Width;j++){
+            cell[i][j]=0;
+        }
+    }
+
+   printf("Please click for the initialization of the world\n");
+    printf("White for dead cell and black for live cell\n");
+    printf("Left button of mouse for make cell alive and right button to make cell dead\n");
+     printf("Please close the window when you finished to continue\n");
+    while(quit){
+   
+    while (SDL_PollEvent(&event)){
+            switch (event.type) {
+                case SDL_QUIT:{
+                    quit=FALSE;
+                    break;
+                }   
+                 case SDL_KEYDOWN:{
+                    switch(event.key.keysym.sym)
+                    {
+                        case SDLK_UP:{
+                            printf("speed up");
+                            
+                           
+                            break;
+                        }
+                        case SDLK_DOWN:{
+                            printf("speed down");
+                           
+                            break;
+                        }
+                        case SDLK_SPACE:{
+                           
+                            break;
+                        }
+                        case SDLK_1:{
+                           printf("1");
+                            break;
+                        }
+                        case SDLK_2:{
+                           printf("2");
+                            break;
+                        }
+                        case SDLK_3:{
+                           printf("3");
+                            break;
+                        }
+                    }
+                } 
+               case SDL_MOUSEBUTTONDOWN:{
+                    
+                    int mouse_y = event.button.x/100;
+                    int mouse_x = event.button.y/100;
+                   
+                    if(event.button.button == SDL_BUTTON_LEFT ){
+                        changeblack(mouse_x,mouse_y,cell);
+                    }
+                    if(event.button.button == SDL_BUTTON_RIGHT ){
+                        changewhite(mouse_x,mouse_y,cell);
+                    }
+
+                }
+                case SDL_MOUSEMOTION:{
+                      
+                     int mouse_y = event.button.x/100;
+                    int mouse_x = event.button.y/100;
+                    if(event.button.button == SDL_BUTTON_LEFT ){
+                        changeblack(mouse_x,mouse_y,cell);
+                    }
+                     if(event.button.button == SDL_BUTTON_X1 ){
+                        changewhite(mouse_x,mouse_y,cell);
+                    }
+
+                }
+               
+            }
+        }
+
+    show(sdlRenderer,sdlWindow,sdlTexture, cell);
+    }
+   
+    close(sdlWindow,sdlTexture,sdlRenderer);
+    return cell;
+
+
+}
+
+
+void getsize(){
+        int a=0;
         int x;
         int b=0;
         printf("Please input the initial size\n");
@@ -267,6 +372,12 @@ int **create(){
         b=1;
         Width=x;
         }
+}
+
+int **input_create(){
+    char buff[100];
+    char c;
+    
        int **cells;
        cells = (int **)malloc(High * sizeof(int *));
 	for(int i = 0; i < High; i++){
@@ -299,9 +410,6 @@ int **create(){
                continue;
            }
            else{
-              
-               
-              
                for(int k=0;k<Width;k++){
                    c=buff[k];
                    cells[z][k]=c-'0';;
@@ -310,24 +418,48 @@ int **create(){
                break;
            }
            }
-        
         }
         printf("\nWorld created successfully \n");
         return cells;
     }
 
+int **create(){
+    int x;
+    int **cells;
+    int a=0;
+    
+    while(a==0){
+    printf("Please choose the way of initialization\n1)input\n2)click\nChoice:");
+    x=optionChoice();
+    if(x==1){
+        getsize();
+       cells = input_create();
+       a=1;
+    }
+    else if(x==2){
+        getsize();
+        cells=click_create();
+        a=1;
+    }
+    else{
+        printf("Please input 1 or 2\n");
+    }
+    }
+    return cells;
 
+}
 
 
 
 int ** load(FILE* file){
-
+   bool quit=TRUE;
     char buff[1000];
     char c;
     int j=0;
     int y;
     int m=100;
     int **temp;
+    int xx=0;
      if (file == NULL ){
     printf("Error\nBook file does not exist");
 	exit(0);
@@ -382,11 +514,12 @@ int ** load(FILE* file){
 	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
 	SDL_Event sdlEvent;
 
-    printf("The origin world:\n");
-    while(m==100){
+    printf("The origin world(Close the window to continue):\n");
+    while(quit){
    while (SDL_PollEvent(&sdlEvent)){
             switch (sdlEvent.type) {
                 case SDL_QUIT:{
+                    quit=FALSE;
                     break;
                 }    
         
@@ -395,15 +528,18 @@ int ** load(FILE* file){
 
     show(sdlRenderer,sdlWindow,sdlTexture, cells);
    /////
+    }
+    close(sdlWindow,sdlTexture,sdlRenderer);
+
     if(y==0){
         printf("This world is terminated\n");
     }
+    while(xx==0){
     printf("Do you want to start with this?(0 for no and 1 for yes)\n");
     printf("Choice:");
     
     m=optionChoice();
-    }
-   close(sdlWindow,sdlTexture,sdlRenderer);
+    
     if(m==-1){
              printf("\nYou should input 0 or 1\n\n");
                 }
@@ -416,166 +552,30 @@ int ** load(FILE* file){
                 }
                 else if(m==0){
                     j=1;
-                    int a=0;
-                
-        int x;
-        int b=0;
-        printf("Please input the initial size\n");
-        while(a==0){
-        printf("Please input the height of the world\nHeight:");
-        x=optionChoice();
-        if(x==-1){
-       printf("\n You should input an Integer larger than 1\n");
-       continue;
-        }
-        if(x<=1){
-            printf("\n Height should be larger than 1 \n");
-            continue;
-        }
-        a=1;
-        High=x;
-        }
-         while(b==0){
-        printf("Please input the width of the world\nWidth:");
-        x=optionChoice();
-        if(x==-1){
-       printf("\n You should input an Integer larger than 1\n");
-       continue;
-        }
-        if(x<=1){
-            printf("\n Width should be larger than 1 \n");
-            continue;
-        }
-        b=1;
-        Width=x;
-        }
+                    xx=1;
+                   
+                }
+        
+    }   
        int **cells;
-       cells = (int **)malloc(High * sizeof(int *));
-	for(int i = 0; i < High; i++){
-		cells[i] = (int *)malloc(Width * sizeof(int));
-	}
-        int d=0;
-        
-        for(int z=0;z<High;z++){  
-                  
-           while(1){
-            d=0; 
-           printf("Please input the cells state for the row %d\n",z+1);
-           printf("Notice:0 for dead and 1 for alive,you can choose to input like \"11011\" or \"1 0 1 0 1\"\n");
-           scanf("%[^\n]",buff);
-           getchar();         
-           delete(buff);
-           if(strlen(buff)!=Width){
-               printf("please input %d numbers\n",Width);
-               continue;
-           }
-           for(int i=0;i<strlen(buff);i++){     
-               if(buff[i]!='0'&&buff[i]!='1'){
-                printf("please input 0 or 1!\n");
-                d=1;
-                 break;
-               }
-                
-           }
-           if(d==1){
-               continue;
-           }
-           else{
-               char m;
-               for(int k=0;k<Width;k++){
-                   m=buff[k];            
-                   cells[z][k]=m-'0';
-               }
-               break;
-           }
-           }
-        
-        }
+       cells=create();
+       
         printf("\nWorld created successfully \n");
         return cells;
-                }
+                
     }
     }
 
     else{
-        int a=0;
-        int x;
-        int b=0;
-        printf("File is empty\nPlease input the initial size\n");
-        while(a==0){
-        printf("Please input the height of the world\nHeight:");
-        x=optionChoice();
-        if(x==-1){
-       printf("\n You should input an Integer larger than 1 \n");
-       continue;
-        }
-        if(x<=1){
-            printf("\n Height should be larger than 1 \n");
-            continue;
-        }
-        a=1;
-        High=x;
-        }
-         while(b==0){
-        printf("Please input the width of the world\nWidth:");
-        x=optionChoice();
-        if(x==-1){
-       printf("\n You should input an Integer larger than 1 \n");
-       continue;
-        }
-        if(x<=1){
-            printf("\n Width should be larger than 1 \n");
-            continue;
-        }
-        b=1;
-        Width=x;
-        }
+      
+        
+        printf("File is empty\nPlease create the world\n");
+      
        int **cells;
-       cells = (int **)malloc(High * sizeof(int *));
-	for(int i = 0; i < High; i++){
-		cells[i] = (int *)malloc(Width * sizeof(int));
-	}
-        int d=0;
+       cells=create();
+    
         
-        for(int z=0;z<High;z++){  
-                  
-           while(1){
-            d=0; 
-           printf("Please input the cells state for the row %d\n",z+1);
-           printf("Notice:0 for dead and 1 for alive,you can choose to input like \"11011\" or \"1 0 1 0 1\"\n");
-           scanf("%[^\n]",buff);
-           getchar();         
-           delete(buff);
-           if(strlen(buff)!=Width){
-               printf("please input %d numbers\n",Width);
-               continue;
-           }
-           for(int i=0;i<strlen(buff);i++){     
-               if(buff[i]!='0'&&buff[i]!='1'){
-                printf("please input 0 or 1!\n");
-                d=1;
-                 break;
-               }
-                
-           }
-           if(d==1){
-               continue;
-           }
-           else{
-              
-               char m;
-              
-               for(int k=0;k<Width;k++){
-                   m=buff[k];
-                   
-                   cells[z][k]=m-'0';
-                   
-               }
-               break;
-           }
-           }
         
-        }
         printf("\nWorld created successfully \n");
         return cells;
     }
@@ -588,29 +588,29 @@ void store(FILE* file,int **cells){
     fprintf(file,"%d\n",High);
     fprintf(file,"%d\n",Width);
     for(int i=0;i<High;i++){
-        for(int j=0;j<Width;j++){      
-            fprintf(file,"%d",cells[i][j]);            
+        for(int j=0;j<Width;j++){  
+            if(j<Width-1){    
+            fprintf(file,"%d",cells[i][j]);  
+            }
+            else{
+                    fprintf(file,"%d\n",cells[i][j]);  
+            }          
         }
     }
 }
 
 
 
-void change(int x,int y,int**cells){
-    if(cells[x][y]==0){
-        cells[x][y]=1;
-    }
-    else{
-        cells[x][y]=0;
-    }
-}
 
 int run2(int**cells){
+    
      int q=1;
     int d=-100;
+    int delaytime=1000;
     int **last=NULL;
-    
-    
+    bool quit=TRUE;
+    int**my=NULL;
+    int x=0;
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) { return -1; }
 
 	// 创建窗口
@@ -629,27 +629,31 @@ int run2(int**cells){
     show(sdlRenderer,sdlWindow,sdlTexture, cells);
     
     SDL_Event event;
-         while(1){
+
+         while(quit){
              while (SDL_PollEvent(&event)){
             switch (event.type) {
                 case SDL_QUIT:{
-        
+                    quit=FALSE;
                     break;
-                }    
-               case SDL_MOUSEBUTTONDOWN:{
-                    int mouse_x = event.button.x/Width;
-                    int mouse_y = event.button.y/High;
-                    if(event.button.button == SDL_BUTTON_LEFT ){
-                        change(mouse_x,mouse_y,cells);
+                }
+                 case SDL_KEYDOWN:{
+                    switch(event.key.keysym.sym)
+                    {
+                          case SDLK_UP:{
+                            printf("speed up");
+                            if(delaytime<=10){
+                                delaytime = 10;
+                            }
+                            delaytime = delaytime-10;
+                            printf(" %d\n", delaytime);
+                            break;
+                        }    
+                       
+                      
                     }
                 }
-                case SDL_MOUSEMOTION:{
-                     int mouse_x = event.button.x/Width;
-                    int mouse_y = event.button.y/High;
-                    if(event.button.button == SDL_BUTTON_LEFT ){
-                        change(mouse_x,mouse_y,cells);
-                    }
-                }
+
                
             }
         }
@@ -657,27 +661,39 @@ int run2(int**cells){
         if(last!=NULL){
         d=judge(cells,last);
         }
-        if(d==0){
+        if(d==0&&x==0){
+            x=1;
             printf("It is terminate\n");
-               close(sdlWindow,sdlTexture,sdlRenderer);
-            return terminate;
+            printf("Close the window to continue\n");
         }
+         show(sdlRenderer,sdlWindow,sdlTexture, cells);
+         SDL_Delay(delaytime);
+        if(d!=0){
         printf("step %d:\n",q);
         free(last);
         last=copy(cells);
-      
-         show(sdlRenderer,sdlWindow,sdlTexture, cells);
         updateWithoutInput(cells);
-        
          printf("\n");
-         q+=1;
-       
+         q+=1;  
     }
-
-    
-
-
-
+         }
+        
+               my=copy(cells);
+               updateWithoutInput(my);
+               d=judge(my,last);
+               if(d==0){
+                   freecell(my);
+                   freecell(last);
+                    close(sdlWindow,sdlTexture,sdlRenderer);
+                   return terminate;
+               }
+               else{
+                  freecell(my);
+                   freecell(last);
+                    close(sdlWindow,sdlTexture,sdlRenderer);
+                   return still;
+               }
+         
 }
 
 
@@ -685,11 +701,12 @@ int run2(int**cells){
 int run1(int **cells,int y)
 
 {
-    
+    int x=0;
     int d=-100;
     int **last=NULL;
-    int m;
+    int delaytime=1000;
     int **my=NULL;
+    bool quit=TRUE;
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) { return -1; }
 
 	// 创建窗口
@@ -711,68 +728,70 @@ int run1(int **cells,int y)
 
     //certain step	
         int z=0;
-        while(z<y){
-          z++;
-          while (SDL_PollEvent(&event)){
+        while(quit){
+          
+          while(quit){
+             while (SDL_PollEvent(&event)){
             switch (event.type) {
                 case SDL_QUIT:{
-                    
+                    quit=FALSE;
                     break;
-                }  
-               case SDL_MOUSEBUTTONDOWN:{
-                  int mouse_x = event.button.x/Width;
-                  int mouse_y = event.button.y/High;
-                  if(event.button.button == SDL_BUTTON_LEFT){
-                      change(mouse_x,mouse_y,cells);
-                     }
-                   
                 }
+                 case SDL_KEYDOWN:{
+                    switch(event.key.keysym.sym)
+                    {
+                          case SDLK_UP:{
+                            printf("speed up");
+                            if(delaytime<=10){
+                                delaytime = 10;
+                            }
+                            delaytime = delaytime-10;
+                            printf(" %d\n", delaytime);
+                            break;
+                        }    
+                       
+                      
+                    }
+                }
+
                
             }
         }
+          }
 
-      
         if(last!=NULL){
            d=judge(cells,last);
         } 
-           if(d==0){
+           if(d==0&&x==0){
+               x=1;
             printf("It is terminate\n");
-                m=0;
-                while(m==0){
-                printf("Do you want to show the next steps?(input 0 for quit and 1 for continue)\n");
-                z=optionChoice();
-                if(z==-1){
-             printf("\nplease input 0 or 1\n\n");
-                }
-                else if(z!=0&&z!=1){
-                    printf("please input 0 or 1\n\n");
-                }
-                else if(z==1){
-                    m=1;
-                }
-                else if(z==0){
-                 printf("The world is terminated\n");
-                      freecell(last);
-                    close(sdlWindow,sdlTexture,sdlRenderer);
-                  return terminate;
-                }
-        }
+             printf("Close the window to continue\n");
+              
            }
-
-           printf("step %d:\n",z);
+           if(z<y){
+            printf("step %d:\n",z+1);
+           }
+            z++;
+            show(sdlRenderer,sdlWindow,sdlTexture, cells);
+            SDL_Delay(delaytime);
+           if(d!=0&&z<y){         
            free(last);
            last=copy(cells);
-         show(sdlRenderer,sdlWindow,sdlTexture, cells);
-             updateWithoutInput(cells);
-           if(z!=y){
-           printf("\n");        
+            updateWithoutInput(cells);
+        if(z==y-1){
+              
+                 printf("The step is up\n");
+                 printf("Please close the window to continue\n");
+               
            }
-           else{
-               printf("The step is up\n");
-               my=copy(cells);
+           }
+          
+         
+    
+        }
+    my=copy(cells);
                updateWithoutInput(my);
                d=judge(my,last);
-               
                 
                if(d==0){
                    freecell(my);
@@ -786,19 +805,12 @@ int run1(int **cells,int y)
                       close(sdlWindow,sdlTexture,sdlRenderer);
                    return still;
                }
-           }
-          
-         
-    }
         
-    
-   
 
-    return 100;
 }
 
 
-int  game(FILE* file,int ** cell){
+int  game(int ** cell){
     int result;
      int x;
      int a=0;
@@ -872,7 +884,7 @@ void  game2(char * filename){
     int a;
      while(1){
          a=0;
-        result=game(file,cell);
+        result=game(cell);
         if(result==terminate){
             while(a==0){
             printf("This world is terminated\n");
@@ -907,7 +919,6 @@ void  game2(char * filename){
         }
         }
         if(result==still){
-            
             while(a==0){
              printf("This world is not terminated\n");           
              printf("Please choose an option\n1)Quit the game\n2)Still use it for another game\n3)Create a new world\n");
