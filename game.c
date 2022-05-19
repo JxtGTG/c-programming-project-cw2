@@ -39,7 +39,7 @@ int **create(){
 //return 0 when the world is end
 int run_terminal(int**cells){
     
-     int q=1;
+     int q=0;
     int d=-100;
     int delaytime=1000;
     int **last=NULL;
@@ -60,8 +60,8 @@ int run_terminal(int**cells){
 	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
 	if (!sdlTexture) { return -1; }
 
-    printf("The origin world:\n");
-    show(sdlRenderer,sdlWindow,sdlTexture, cells);
+ 
+   
     
     SDL_Event event;
 
@@ -101,16 +101,24 @@ int run_terminal(int**cells){
             printf("It is terminate\n");
             printf("Close the window to continue\n");
         }
+        
          show(sdlRenderer,sdlWindow,sdlTexture, cells);
          SDL_Delay(delaytime);
+        
         if(d!=0){
+             if(q==0){
+               printf("The origin world:\n");
+        }
+        else{
         printf("step %d:\n",q);
+        }
         free(last);
         last=copy(cells);
         updateWithoutInput(cells);
          printf("\n");
          q+=1;  
     }
+    
          }
         
                my=copy(cells);
@@ -137,6 +145,7 @@ int run_terminal(int**cells){
 int run_step(int **cells,int y)
 
 {
+    int mm=0;
     int x=0;
     int d=-100;
     int **last=NULL;
@@ -157,8 +166,8 @@ int run_step(int **cells,int y)
 	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
 	if (!sdlTexture) { return -1; }
 
-    printf("The origin world:\n");
-    show(sdlRenderer,sdlWindow,sdlTexture, cells);
+   
+  
     
     SDL_Event event;
 
@@ -166,7 +175,7 @@ int run_step(int **cells,int y)
         int z=0;
         while(quit){
           
-          while(quit){
+          
              while (SDL_PollEvent(&event)){
             switch (event.type) {
                 case SDL_QUIT:{
@@ -193,7 +202,6 @@ int run_step(int **cells,int y)
                
             }
         }
-          }
 
         if(last!=NULL){
            d=judge(cells,last);
@@ -202,28 +210,30 @@ int run_step(int **cells,int y)
                x=1;
             printf("It is terminate\n");
              printf("Close the window to continue\n");
-              
+   
            }
-           if(z<y){
-            printf("step %d:\n",z+1);
+           if(d!=0&&z<=y){
+               if(z==0){
+                    printf("The origin world:\n");
+               }
+            else{
+                printf("step %d:\n",z);
+            }
            }
-            z++;
             show(sdlRenderer,sdlWindow,sdlTexture, cells);
             SDL_Delay(delaytime);
-           if(d!=0&&z<y){         
+           if(d!=0&&z<=y){         
            free(last);
            last=copy(cells);
             updateWithoutInput(cells);
-        if(z==y-1){
-              
-                 printf("The step is up\n");
-                 printf("Please close the window to continue\n");
-               
            }
+             z++;
+           if(d!=0&&z>y&&mm==0){ 
+               mm=1;
+                 printf("The step is up\n");
+                 printf("Please close the window to continue\n");  
            }
           
-         
-    
         }
     my=copy(cells);
                updateWithoutInput(my);

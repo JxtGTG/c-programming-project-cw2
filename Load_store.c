@@ -1,4 +1,5 @@
 
+
 #include"Load_store.h"
 
 int Width;
@@ -86,9 +87,36 @@ int ** load(FILE* file){
     close(sdlWindow,sdlTexture,sdlRenderer);
 
     if(y==0){
+            xx=1;
+        while(y==0){
         printf("This world is terminated\n");
+         printf("Do you want to start with this by change it?(0 for no and 1 for yes)\n");
+         printf("Choice:");
+    
+    m=optionChoice();
+    
+    if(m==-1){
+             printf("\nYou should input 0 or 1\n\n");
+                }
+                else if(m!=0&&m!=1){
+                    printf("please input 0 or 1\n\n");
+                    continue;
+                }
+                else if(m==1){
+                    changecell(cells);
+                    return cells;
+                }
+                else if(m==0){
+                   j=1;
+                    y=1;
+                   
+                }
+
+        }
+
     }
     while(xx==0){
+
     printf("Do you want to start with this?(0 for no and 1 for yes)\n");
     printf("Choice:");
     
@@ -105,7 +133,7 @@ int ** load(FILE* file){
                     return cells;
                 }
                 else if(m==0){
-                    j=1;
+
                     xx=1;
                    
                 }
