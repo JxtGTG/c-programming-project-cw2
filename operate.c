@@ -1,5 +1,9 @@
 #include "operate.h"
-
+#include <SDL2/SDL.h>
+#include <stdbool.h>
+#include<stdio.h>
+#include"utility.h"
+#include "Load_store.h"
 
 
 //function for user to create the world in a input way
@@ -69,7 +73,11 @@ void getsize(){
        continue;
         }
         if(x<=1){
-            printf("\n Height should be larger than 1 \n");
+            printf("\nHeight should be larger than 1 \n");
+            continue;
+        }
+         if(x>60){
+            printf("\nHeight should be smaller than 60 because of screen size \n");
             continue;
         }
         a=1;
@@ -83,7 +91,11 @@ void getsize(){
        continue;
         }
         if(x<=1){
-            printf("\n Width should be larger than 1 \n");
+            printf("\nWidth should be larger than 1 \n");
+            continue;
+        }
+         if(x>60){
+            printf("\nWidth should be smaller than 60 because of screen size \n");
             continue;
         }
         b=1;
@@ -95,12 +107,22 @@ void getsize(){
 //for user to click for world creation
 //return the pointer of the created world
 int **click_create(){
-    
+    int swidth=30;
+    int sheight=30;
+
+   if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+    if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
     bool quit=true;
     SDL_Init(SDL_INIT_EVERYTHING);
 
 	// 创建窗口
-	SDL_Window *sdlWindow = SDL_CreateWindow("drawRandRect",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*100, High*100, SDL_WINDOW_SHOWN);
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth, High*sheight, SDL_WINDOW_SHOWN);
 
 
 	// 创建渲染器
@@ -108,7 +130,7 @@ int **click_create(){
 
 
 	// 创建纹理
-	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth, High*sheight);
 	SDL_Event event;
      int **cell;
        cell = (int **)malloc(High * sizeof(int *));
@@ -167,8 +189,8 @@ int **click_create(){
                 } 
                case SDL_MOUSEBUTTONDOWN:{
                     
-                    int mouse_y = event.button.x/100;
-                    int mouse_x = event.button.y/100;
+                    int mouse_y = event.button.x/swidth;
+                    int mouse_x = event.button.y/sheight;
                    
                     if(event.button.button == SDL_BUTTON_LEFT ){
                         changeblack(mouse_x,mouse_y,cell);
@@ -180,8 +202,8 @@ int **click_create(){
                 }
                 case SDL_MOUSEMOTION:{
                       
-                     int mouse_y = event.button.x/100;
-                    int mouse_x = event.button.y/100;
+                     int mouse_y = event.button.x/swidth;
+                    int mouse_x = event.button.y/sheight;
                     if(event.button.button == SDL_BUTTON_LEFT ){
                         changeblack(mouse_x,mouse_y,cell);
                     }
@@ -206,12 +228,23 @@ int **click_create(){
 
 //function for the visualization of the world
 void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTexture,int** cells){
+     int swidth=30;
+    int sheight=30;
+
+   if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+    if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
        
     SDL_Rect rect;
     rect.x=0;
     rect.y=0;
-    rect.h=100;
-    rect.w=100;
+    rect.h=swidth;
+    rect.w=sheight;
     SDL_SetRenderTarget(sdlRenderer,sdlTexture); // 改变渲染目标为纹理
     SDL_SetRenderDrawColor(sdlRenderer,255,255,255,255); // 设置纹理颜色(颜色为RGBA)
     SDL_RenderClear(sdlRenderer); // 清空渲染器
@@ -225,7 +258,7 @@ void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTextur
                SDL_SetRenderDrawColor(sdlRenderer, 100, 100, 100, 255);
                SDL_RenderDrawRect(sdlRenderer, &rect);
            
-               rect.x+=100;
+               rect.x+=swidth;
                
             }
             if(cells[i][j]==1){
@@ -235,11 +268,11 @@ void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTextur
                  SDL_SetRenderDrawColor(sdlRenderer, 100, 100, 100, 255);
                  SDL_RenderDrawRect(sdlRenderer, &rect);
        
-                 rect.x+=100;
+                 rect.x+=swidth;
             }
         }
         rect.x=0;
-        rect.y+=100;
+        rect.y+=sheight;
     }
      SDL_SetRenderTarget(sdlRenderer, NULL);		// 恢复默认渲染目标,将要渲染的目标设置为默认窗口
 	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL)	;	// 将纹理数据复制给渲染器
@@ -372,6 +405,113 @@ void changewhite(int x,int y,int**cells){
         cells[x][y]=0;
     }
   
+}
+
+
+void  changecell(int **cell){
+      bool quit=true;
+    SDL_Init(SDL_INIT_EVERYTHING);
+     int swidth=30;
+    int sheight=30;
+
+   if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+    if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
+	// 创建窗口
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth, High*sheight, SDL_WINDOW_SHOWN);
+
+
+	// 创建渲染器
+	SDL_Renderer *sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+
+
+	// 创建纹理
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth, High*sheight);
+	SDL_Event event;
+    
+   printf("Please click for the initialization of the world\n");
+    printf("White for dead cell and black for live cell\n");
+    printf("Left button of mouse for make cell alive and right button to make cell dead\n");
+     printf("Please close the window when you finished to continue\n");
+    while(quit){
+   
+    while (SDL_PollEvent(&event)){
+            switch (event.type) {
+                case SDL_QUIT:{
+                    quit=false;
+                    break;
+                }   
+                 case SDL_KEYDOWN:{
+                    switch(event.key.keysym.sym)
+                    {
+                        case SDLK_UP:{
+                            printf("speed up");
+                            
+                           
+                            break;
+                        }
+                        case SDLK_DOWN:{
+                            printf("speed down");
+                           
+                            break;
+                        }
+                        case SDLK_SPACE:{
+                           
+                            break;
+                        }
+                        case SDLK_1:{
+                           printf("1");
+                            break;
+                        }
+                        case SDLK_2:{
+                           printf("2");
+                            break;
+                        }
+                        case SDLK_3:{
+                           printf("3");
+                            break;
+                        }
+                    }
+                } 
+               case SDL_MOUSEBUTTONDOWN:{
+                    
+                    int mouse_y = event.button.x/swidth;
+                    int mouse_x = event.button.y/sheight;
+                   
+                    if(event.button.button == SDL_BUTTON_LEFT ){
+                        changeblack(mouse_x,mouse_y,cell);
+                    }
+                    if(event.button.button == SDL_BUTTON_RIGHT ){
+                        changewhite(mouse_x,mouse_y,cell);
+                    }
+
+                }
+                case SDL_MOUSEMOTION:{
+                      
+                     int mouse_y = event.button.x/swidth;
+                    int mouse_x = event.button.y/sheight;
+                    if(event.button.button == SDL_BUTTON_LEFT ){
+                        changeblack(mouse_x,mouse_y,cell);
+                    }
+                     if(event.button.button == SDL_BUTTON_X1 ){
+                        changewhite(mouse_x,mouse_y,cell);
+                    }
+
+                }
+               
+            }
+        }
+
+    show(sdlRenderer,sdlWindow,sdlTexture, cell);
+    }
+   
+    close(sdlWindow,sdlTexture,sdlRenderer);
+
 }
 
 

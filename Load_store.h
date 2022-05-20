@@ -1,12 +1,13 @@
 
 #ifndef _GUARD_lo 
 #define _GUARD_lo
-
+#include <stdio.h>
 #include <stdio.h>
 #include "utility.h"
 #include <stdbool.h>
 #include <SDL2/SDL.h>
-
+#include "operate.h"
+#include "game.h"
 
 
 extern int Width;

@@ -38,18 +38,30 @@ int **create(){
 //return 1 if the world is not end when exit
 //return 0 when the world is end
 int run_terminal(int**cells){
-    
+    int button=0;
      int q=0;
     int d=-100;
-    int delaytime=1000;
+    int delaytime=250;
     int **last=NULL;
     bool quit=true;
     int**my=NULL;
     int x=0;
+   int swidth=30;
+    int sheight=30;
+
+    if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+    if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
+
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) { return -1; }
 
 	// 创建窗口
-	SDL_Window *sdlWindow = SDL_CreateWindow("drawRandRect",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*100, High*100, SDL_WINDOW_SHOWN);
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth,High*sheight, SDL_WINDOW_SHOWN);
 	if (!sdlWindow) { return -1; }
 
 	// 创建渲染器
@@ -57,10 +69,10 @@ int run_terminal(int**cells){
 	if (!sdlRenderer) { return -1; }
 
 	// 创建纹理
-	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth, High*sheight);
 	if (!sdlTexture) { return -1; }
 
- 
+   printf("press enter to start or stop\n");
    
     
     SDL_Event event;
@@ -76,18 +88,36 @@ int run_terminal(int**cells){
                     switch(event.key.keysym.sym)
                     {
                           case SDLK_UP:{
-                            printf("speed up");
+                            printf("\nspeed up");
                             if(delaytime<=10){
                                 delaytime = 10;
                             }
                             delaytime = delaytime-10;
                             printf(" %d\n", delaytime);
                             break;
+                        }  
+                        case SDLK_DOWN:{
+                            printf("\nspeed down");
+                            if(delaytime>=250){
+                                delaytime = 250;
+                            }
+                            delaytime = delaytime+10;
+                           
+                            break;
                         }    
                        
                       
                     }
                 }
+                 case SDLK_KP_ENTER:{
+                     if(button==0){
+                           button=1;
+                     }
+                     else{button=0;}
+                            break;
+                        }   
+
+                
 
                
             }
@@ -102,16 +132,17 @@ int run_terminal(int**cells){
             printf("Close the window to continue\n");
         }
         
-         show(sdlRenderer,sdlWindow,sdlTexture, cells);
-         SDL_Delay(delaytime);
-        
-        if(d!=0){
-             if(q==0){
+        if(q==0&&button==1){
                printf("The origin world:\n");
         }
-        else{
+        if(q!=0&&d!=0&&button==1){
         printf("step %d:\n",q);
         }
+
+        show(sdlRenderer,sdlWindow,sdlTexture, cells);
+        SDL_Delay(delaytime);
+        
+        if(d!=0&&button==1){
         free(last);
         last=copy(cells);
         updateWithoutInput(cells);
@@ -145,17 +176,30 @@ int run_terminal(int**cells){
 int run_step(int **cells,int y)
 
 {
+    int button=0;
     int mm=0;
     int x=0;
     int d=-100;
     int **last=NULL;
-    int delaytime=1000;
+    int delaytime=250;
     int **my=NULL;
     bool quit=true;
+
+    int swidth=30;
+    int sheight=30;
+
+    if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+    if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) { return -1; }
 
 	// 创建窗口
-	SDL_Window *sdlWindow = SDL_CreateWindow("drawRandRect",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*100, High*100, SDL_WINDOW_SHOWN);
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth,High* sheight, SDL_WINDOW_SHOWN);
 	if (!sdlWindow) { return -1; }
 
 	// 创建渲染器
@@ -163,14 +207,14 @@ int run_step(int **cells,int y)
 	if (!sdlRenderer) { return -1; }
 
 	// 创建纹理
-	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth,High* sheight);
 	if (!sdlTexture) { return -1; }
 
    
   
     
     SDL_Event event;
-
+    printf("press enter to start or stop\n");
     //certain step	
         int z=0;
         while(quit){
@@ -181,23 +225,41 @@ int run_step(int **cells,int y)
                 case SDL_QUIT:{
                     quit=false;
                     break;
+                    
                 }
                  case SDL_KEYDOWN:{
                     switch(event.key.keysym.sym)
                     {
                           case SDLK_UP:{
-                            printf("speed up");
+                            printf("\nspeed up");
                             if(delaytime<=10){
                                 delaytime = 10;
                             }
                             delaytime = delaytime-10;
-                            printf(" %d\n", delaytime);
+                           
                             break;
-                        }    
+                        }  
+                         case SDLK_DOWN:{
+                            printf("\nspeed down");
+                            if(delaytime>=250){
+                                delaytime = 250;
+                            }
+                            delaytime = delaytime+10;
+                           
+                            break;
+                        }   
                        
                       
                     }
                 }
+                 case SDLK_KP_ENTER:{
+                              if(button==0){
+                           button=1;
+                     }
+                     else{button=0;}
+                            break;
+                        }   
+
 
                
             }
@@ -212,9 +274,9 @@ int run_step(int **cells,int y)
              printf("Close the window to continue\n");
    
            }
-           if(d!=0&&z<=y){
+           if(d!=0&&z<=y&&button==1){
                if(z==0){
-                    printf("The origin world:\n");
+                printf("The origin world:\n");
                }
             else{
                 printf("step %d:\n",z);
@@ -222,12 +284,14 @@ int run_step(int **cells,int y)
            }
             show(sdlRenderer,sdlWindow,sdlTexture, cells);
             SDL_Delay(delaytime);
-           if(d!=0&&z<=y){         
+           if(d!=0&&z<=y&&button==1){         
            free(last);
            last=copy(cells);
             updateWithoutInput(cells);
            }
+           if(button==1){
              z++;
+           }
            if(d!=0&&z>y&&mm==0){ 
                mm=1;
                  printf("The step is up\n");
@@ -383,7 +447,7 @@ void  whole_game(char * filename){
              }
              else if(x==1){
                  
-                printf("\nGame closed,Bye Bye\n\n");
+                printf("\nGame closed,Bye Bye\n");
                 
                  store(close,cell);
                

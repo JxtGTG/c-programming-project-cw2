@@ -15,6 +15,8 @@ int ** load(FILE* file){
     int m=100;
     int **temp;
     int xx=0;
+
+   
      if (file == NULL ){
     printf("Error\nBook file does not exist");
 	exit(0);
@@ -43,7 +45,18 @@ int ** load(FILE* file){
             cells[i][j]=c-'0';
         }
     }
-        
+    int swidth=30;
+    int sheight=30;
+
+    if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+     if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
+
     temp=copy(cells);
     updateWithoutInput(cells);
     y=judge(cells,temp);
@@ -58,7 +71,7 @@ int ** load(FILE* file){
     SDL_Init(SDL_INIT_EVERYTHING);
 
 	// 创建窗口
-	SDL_Window *sdlWindow = SDL_CreateWindow("drawRandRect",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*100, High*100, SDL_WINDOW_SHOWN);
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth, High*sheight, SDL_WINDOW_SHOWN);
 
 
 	// 创建渲染器
@@ -66,7 +79,7 @@ int ** load(FILE* file){
 
 
 	// 创建纹理
-	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*100, High*100);
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth,High*sheight);
 	SDL_Event sdlEvent;
 
     printf("The origin world(Close the window to continue):\n");

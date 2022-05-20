@@ -7,9 +7,6 @@
 #include<stdio.h>
 #include"utility.h"
 #include "Load_store.h"
-
-
-
 //function for user to create the world in a input way
 //return the pointer of the world if it is created correctly
 int **input_create();
@@ -59,6 +56,9 @@ void changeblack(int x,int y,int**cells);
 
 //change the cell to be dead state
 void changewhite(int x,int y,int**cells);
+
+//click to change the board
+void changecell(int **cell);
 
 
 #endif
