@@ -4,8 +4,10 @@
 
 int Width;
 int High;
+int delaytime;
 //load the data from the specific file to create the world
 //return the world pointer
+
 int ** load(FILE* file){
    bool quit=true;
     char buff[1000];
@@ -33,6 +35,9 @@ int ** load(FILE* file){
    
     fgets(buff,100,file);
     Width=(int)atoi(buff);
+
+     fgets(buff,100,file);
+    delaytime=(int)atoi(buff);
     int **cells;
     cells = (int **)malloc(High * sizeof(int *));
 	for(int i = 0; i < High; i++){
@@ -91,8 +96,20 @@ int ** load(FILE* file){
                     break;
                 }    
         
-            }
+            
+             case SDL_KEYDOWN:{
+                    switch(sdlEvent.key.keysym.sym)
+                    {
+                         
+                 case SDLK_SPACE:{
+                            quit=false;
+                    break;
+                        }
+
         }
+             }
+            }
+            }
 
     show(sdlRenderer,sdlWindow,sdlTexture, cells);
    /////
@@ -163,7 +180,7 @@ int ** load(FILE* file){
 
     else{
       
-        
+        delaytime=250;
         printf("File is empty\nPlease create the world\n");
       
        int **cells;
@@ -184,14 +201,16 @@ int ** load(FILE* file){
 void store(FILE* file,int **cells){
     fprintf(file,"%d\n",High);
     fprintf(file,"%d\n",Width);
+     fprintf(file,"%d\n",250);
     for(int i=0;i<High;i++){
         for(int j=0;j<Width;j++){  
             if(j<Width-1){    
             fprintf(file,"%d",cells[i][j]);  
             }
             else{
-                    fprintf(file,"%d\n",cells[i][j]);  
+                fprintf(file,"%d\n",cells[i][j]);  
             }          
         }
     }
+
 }

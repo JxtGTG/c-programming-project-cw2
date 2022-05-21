@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
+
+
 void test_judge(){
    int **cell;
    int **lastcell;
@@ -148,6 +150,12 @@ int main(void)
 {
 UNITY_BEGIN();
 RUN_TEST(test_judge);
+RUN_TEST(test_copy);
+RUN_TEST(test_freecell);
+RUN_TEST(test_changeblack);
+RUN_TEST(test_changewhite);
+RUN_TEST(test_mydelete);
+
 
 return UNITY_END();
 }

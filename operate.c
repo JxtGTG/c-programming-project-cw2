@@ -158,32 +158,10 @@ int **click_create(){
                  case SDL_KEYDOWN:{
                     switch(event.key.keysym.sym)
                     {
-                        case SDLK_UP:{
-                            printf("speed up");
-                            
-                           
-                            break;
-                        }
-                        case SDLK_DOWN:{
-                            printf("speed down");
-                           
-                            break;
-                        }
-                        case SDLK_SPACE:{
-                           
-                            break;
-                        }
-                        case SDLK_1:{
-                           printf("1");
-                            break;
-                        }
-                        case SDLK_2:{
-                           printf("2");
-                            break;
-                        }
-                        case SDLK_3:{
-                           printf("3");
-                            break;
+                        
+                         case SDLK_SPACE:{
+                            quit=false;
+                    break;
                         }
                     }
                 } 
@@ -228,6 +206,22 @@ int **click_create(){
 
 //function for the visualization of the world
 void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTexture,int** cells){
+    if(sdlRenderer==NULL){
+        printf("Renderer is NULL");
+        return;
+    }
+     if(sdlWindow==NULL){
+        printf("Window is NULL");
+        return;
+    }
+     if(sdlTexture==NULL){
+        printf("Texture is NULL");
+        return;
+    }
+     if(cells==NULL){
+        printf("World is NULL");
+        return;
+    }
      int swidth=30;
     int sheight=30;
 
@@ -449,32 +443,9 @@ void  changecell(int **cell){
                  case SDL_KEYDOWN:{
                     switch(event.key.keysym.sym)
                     {
-                        case SDLK_UP:{
-                            printf("speed up");
-                            
-                           
-                            break;
-                        }
-                        case SDLK_DOWN:{
-                            printf("speed down");
-                           
-                            break;
-                        }
                         case SDLK_SPACE:{
-                           
-                            break;
-                        }
-                        case SDLK_1:{
-                           printf("1");
-                            break;
-                        }
-                        case SDLK_2:{
-                           printf("2");
-                            break;
-                        }
-                        case SDLK_3:{
-                           printf("3");
-                            break;
+                            quit=false;
+                    break;
                         }
                     }
                 } 

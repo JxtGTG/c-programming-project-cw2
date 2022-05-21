@@ -41,7 +41,7 @@ int run_terminal(int**cells){
     int button=0;
      int q=0;
     int d=-100;
-    int delaytime=250;
+    
     int **last=NULL;
     bool quit=true;
     int**my=NULL;
@@ -88,35 +88,52 @@ int run_terminal(int**cells){
                     switch(event.key.keysym.sym)
                     {
                           case SDLK_UP:{
-                            printf("\nspeed up");
+                           if(delaytime==10){
+                                printf("\nFastest speed already\n");
+                             }
+                             else{
+                            printf("\nspeed up\n");
+                             }
                             if(delaytime<=10){
                                 delaytime = 10;
                             }
+                            else{
                             delaytime = delaytime-10;
-                            printf(" %d\n", delaytime);
-                            break;
-                        }  
-                        case SDLK_DOWN:{
-                            printf("\nspeed down");
-                            if(delaytime>=250){
-                                delaytime = 250;
                             }
-                            delaytime = delaytime+10;
                            
                             break;
-                        }    
-                       
-                      
-                    }
-                }
-                 case SDLK_KP_ENTER:{
+                        }  
+                         case SDLK_DOWN:{
+                             if(delaytime==500){
+                                printf("\nLowest speed already\n");
+                             }
+                             else{
+                            printf("\nspeed down\n");
+                             }
+                            if(delaytime>=500){
+                                delaytime = 500;
+                            }
+                            else{
+                            delaytime = delaytime+10;
+                            }
+                           
+                            break;
+                        }   
+                        case SDLK_RETURN:{
                      if(button==0){
                            button=1;
                      }
                      else{button=0;}
                             break;
                         }   
-
+                         case SDLK_SPACE:{
+                            quit=false;
+                    break;
+                        }
+                       
+                      
+                    }
+                }
                 
 
                
@@ -151,7 +168,7 @@ int run_terminal(int**cells){
     }
     
          }
-        
+              last=copy(cells);
                my=copy(cells);
                updateWithoutInput(my);
                d=judge(my,last);
@@ -181,7 +198,7 @@ int run_step(int **cells,int y)
     int x=0;
     int d=-100;
     int **last=NULL;
-    int delaytime=250;
+   
     int **my=NULL;
     bool quit=true;
 
@@ -231,35 +248,54 @@ int run_step(int **cells,int y)
                     switch(event.key.keysym.sym)
                     {
                           case SDLK_UP:{
-                            printf("\nspeed up");
+                           if(delaytime==10){
+                                printf("\nFastest speed already\n");
+                             }
+                             else{
+                            printf("\nspeed up\n");
+                             }
                             if(delaytime<=10){
                                 delaytime = 10;
                             }
+                            else{
                             delaytime = delaytime-10;
+                            }
                            
                             break;
                         }  
                          case SDLK_DOWN:{
-                            printf("\nspeed down");
-                            if(delaytime>=250){
-                                delaytime = 250;
+                             if(delaytime==500){
+                                printf("\nLowest speed already\n");
+                             }
+                             else{
+                            printf("\nspeed down\n");
+                             }
+                            if(delaytime>=500){
+                                delaytime = 500;
                             }
+                            else{
                             delaytime = delaytime+10;
+                            }
                            
                             break;
                         }   
-                       
-                      
-                    }
-                }
-                 case SDLK_KP_ENTER:{
-                              if(button==0){
+                        case SDLK_RETURN:{
+                     if(button==0){
                            button=1;
                      }
                      else{button=0;}
                             break;
                         }   
-
+                        case SDLK_SPACE:{
+                            quit=false;
+                    break;
+                        }
+                       
+                       
+                      
+                    }
+                }
+                
 
                
             }
@@ -299,6 +335,7 @@ int run_step(int **cells,int y)
            }
           
         }
+         last=copy(cells);
     my=copy(cells);
                updateWithoutInput(my);
                d=judge(my,last);
@@ -391,7 +428,12 @@ int  game(int ** cell){
 
 //The whole game system
 void  whole_game(char * filename){
-    FILE *file=fopen("my.txt","r+");
+    FILE *file=fopen(filename,"r+");
+
+    if (file==NULL){
+        printf("File not found");
+        return;
+    }
    
     int **cell=load(file);
     fclose(file);
@@ -442,7 +484,7 @@ void  whole_game(char * filename){
              printf("Choice:");
              x=optionChoice();
              if(x==-1){
-            printf("\nPlease input 1 or 2 or 3\n\n");
+            printf("\n\nPlease input 1 or 2 or 3\n\n");
                   continue;
              }
              else if(x==1){
@@ -467,7 +509,7 @@ void  whole_game(char * filename){
                 a=1;
              }
              else{
-                 printf("Please input 1 or 2 or 3\n"); 
+                 printf("\n\nPlease input 1 or 2 or 3\n\n"); 
                  continue;
              }
              

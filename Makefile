@@ -11,7 +11,7 @@ SRC= main.c game.c Load_store.c operate.c utility.c
 
 # generic build details
 CC =     gcc
-CFLAGS = -Wall -O
+CFLAGS = -std=c99 -Wall -O
 LIBS =   -lSDL2 -lSDL2_image
 
 # compile to  object code
@@ -29,13 +29,9 @@ $(EXE): $(OBJ)
 # clean up compilation
 
 clean:
-	rm -f $(OBJ) $(EXE)
+	rm-rd  *.o life
 
 # dependencies
 
-main.o:  main.c game.h
-game.o: game.c game.h
-Load_store.o:Load_store.c Load_store.h
-utility.o:utility.c utility.h
-operate.o:operate.c operate.h
+
 

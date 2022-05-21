@@ -12,6 +12,7 @@
 
 extern int Width;
 extern int High;
+extern int delaytime;
 
 
 //load the data from the specific file to create the world
