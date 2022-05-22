@@ -12,7 +12,7 @@ SRC= main.c game.c Load_store.c operate.c utility.c
 # generic build details
 CC =     gcc
 CFLAGS = -std=c99 -Wall -O
-LIBS =   -lSDL2 -lSDL2_image
+LIBS =   -lSDL2 -lSDL2_ttf
 
 # compile to  object code
 

@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include <SDL2/SDL_ttf.h>
 #define terminate 0
 #define still 1
 
@@ -41,14 +41,14 @@ int run_terminal(int**cells){
     int button=0;
      int q=0;
     int d=-100;
-    
+    int way=0;
     int **last=NULL;
     bool quit=true;
     int**my=NULL;
     int x=0;
    int swidth=30;
     int sheight=30;
-
+   
     if(High>20||Width>20){
         swidth=10;
         sheight=10;
@@ -60,8 +60,14 @@ int run_terminal(int**cells){
 
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) { return -1; }
 
+      TTF_Init();
+   int phigh=0;
+    if(Width>=40&&High>=40){
+        phigh=50;
+    }
+
 	// 创建窗口
-	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth,High*sheight, SDL_WINDOW_SHOWN);
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth,High*sheight+phigh, SDL_WINDOW_SHOWN);
 	if (!sdlWindow) { return -1; }
 
 	// 创建渲染器
@@ -69,10 +75,26 @@ int run_terminal(int**cells){
 	if (!sdlRenderer) { return -1; }
 
 	// 创建纹理
-	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth, High*sheight);
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth, High*sheight+phigh);
 	if (!sdlTexture) { return -1; }
 
    printf("press enter to start or stop\n");
+
+    TTF_Font *ttffont=TTF_OpenFont("lazy.ttf",20);
+    SDL_Surface * sdlsurface=NULL;
+    SDL_Texture * texture=NULL;
+    SDL_Rect dstrect;
+    SDL_Color color={52,203,120,255};/*字体颜色RGBA*/
+      
+     
+	 char *word=NULL;
+   
+   if(High>=40&&Width>=40){
+       way=1;
+        ttffont=TTF_OpenFont("lazy.ttf",50);
+    }
+    
+    
    
     
     SDL_Event event;
@@ -149,14 +171,38 @@ int run_terminal(int**cells){
             printf("Close the window to continue\n");
         }
         
-        if(q==0&&button==1){
+        if(q==0&&button==1&&d!=0){
                printf("The origin world:\n");
         }
         if(q!=0&&d!=0&&button==1){
         printf("step %d:\n",q);
         }
 
-        show(sdlRenderer,sdlWindow,sdlTexture, cells);
+        if(way==0){
+            show(sdlRenderer,sdlWindow,sdlTexture, cells);
+           }
+           else{
+              
+               int number=q;
+              if(d==0||button==0){
+                  number=number-1;
+                  if(number<0){
+                      number=0;
+                  }
+              }
+          char str[25];
+            char a[20]="Generations:";
+	      sprintf(str, "%d" ,number);
+	      word=strcat(a,str);
+          sdlsurface=TTF_RenderUTF8_Blended(ttffont,word,color);
+         memset(word, 0, 100*sizeof(char));
+	      texture=SDL_CreateTextureFromSurface(sdlRenderer,sdlsurface);
+        dstrect.x=Width*swidth/2-sdlsurface->w/2;/*显示的起始位置*/
+	     dstrect.y=0;/*显示的起始位置*/
+	    dstrect.w=sdlsurface->w;/*显示的宽度*/
+	     dstrect.h=sdlsurface->h;/*显示的高度*/
+            showlabel(sdlRenderer,sdlWindow, sdlTexture,cells,sdlsurface,texture,dstrect);
+           }
         SDL_Delay(delaytime);
         
         if(d!=0&&button==1){
@@ -193,15 +239,16 @@ int run_terminal(int**cells){
 int run_step(int **cells,int y)
 
 {
+    
     int button=0;
     int mm=0;
     int x=0;
     int d=-100;
     int **last=NULL;
-   
+    int way=0;
     int **my=NULL;
     bool quit=true;
-
+ 
     int swidth=30;
     int sheight=30;
 
@@ -214,29 +261,52 @@ int run_step(int **cells,int y)
         sheight=50;
     }
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) { return -1; }
-
+      TTF_Init();
+   int phigh=0;
+    if(Width>=40&&High>=40){
+        phigh=50;
+    }
+   
 	// 创建窗口
-	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth,High* sheight, SDL_WINDOW_SHOWN);
+	SDL_Window *sdlWindow = SDL_CreateWindow("Game of life",  SDL_WINDOWPOS_CENTERED,  SDL_WINDOWPOS_CENTERED, Width*swidth,High* sheight+phigh, SDL_WINDOW_SHOWN);
 	if (!sdlWindow) { return -1; }
 
 	// 创建渲染器
-	SDL_Renderer *sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+	
+    SDL_Renderer *sdlRenderer=SDL_CreateRenderer(sdlWindow,-1,SDL_RENDERER_ACCELERATED);
 	if (!sdlRenderer) { return -1; }
 
 	// 创建纹理
-	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth,High* sheight);
+	SDL_Texture *sdlTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, Width*swidth,High* sheight+phigh);
 	if (!sdlTexture) { return -1; }
 
+    SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
+	/*清空渲染器*/
+	SDL_RenderClear(sdlRenderer);
+
    
-  
+   TTF_Font *ttffont=TTF_OpenFont("lazy.ttf",20);
+    SDL_Surface * sdlsurface=NULL;
+    SDL_Texture * texture=NULL;
+    SDL_Rect dstrect;
+    SDL_Color color={52,203,120,255};/*字体颜色RGBA*/
+      
+     
+	 char *word=NULL;
+   
+   if(High>=40&&Width>=40){
+       way=1;
+        ttffont=TTF_OpenFont("lazy.ttf",50);
+    }
     
+    
+   
     SDL_Event event;
     printf("press enter to start or stop\n");
     //certain step	
         int z=0;
         while(quit){
-          
-          
+      
              while (SDL_PollEvent(&event)){
             switch (event.type) {
                 case SDL_QUIT:{
@@ -318,16 +388,43 @@ int run_step(int **cells,int y)
                 printf("step %d:\n",z);
             }
            }
+           if(way==0){
             show(sdlRenderer,sdlWindow,sdlTexture, cells);
+           }
+           else{
+               int number=z;
+               
+               if(z>y){
+                   number=y;
+               }
+               if(d==0||button==0){
+                   number=number-1;
+                    if(number<0){
+                      number=0;
+                  }
+               }
+          char str[25];
+            char a[20]="Generations:";
+	      sprintf(str, "%d" ,number);
+	      word=strcat(a,str);
+          
+          sdlsurface=TTF_RenderUTF8_Blended(ttffont,word,color);
+         memset(word, 0, 100*sizeof(char));
+	      texture=SDL_CreateTextureFromSurface(sdlRenderer,sdlsurface);
+        dstrect.x=Width*swidth/2-sdlsurface->w/2;/*显示的起始位置*/
+	     dstrect.y=0;/*显示的起始位置*/
+	    dstrect.w=sdlsurface->w;/*显示的宽度*/
+	     dstrect.h=sdlsurface->h;/*显示的高度*/
+            showlabel(sdlRenderer,sdlWindow, sdlTexture,cells,sdlsurface,texture,dstrect);
+           }
             SDL_Delay(delaytime);
            if(d!=0&&z<=y&&button==1){         
            free(last);
            last=copy(cells);
             updateWithoutInput(cells);
+            z++;
            }
-           if(button==1){
-             z++;
-           }
+          
            if(d!=0&&z>y&&mm==0){ 
                mm=1;
                  printf("The step is up\n");
@@ -336,8 +433,8 @@ int run_step(int **cells,int y)
           
         }
          last=copy(cells);
-    my=copy(cells);
-               updateWithoutInput(my);
+        my=copy(cells);
+                updateWithoutInput(my);
                d=judge(my,last);
                 
                if(d==0){

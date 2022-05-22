@@ -233,8 +233,8 @@ void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTextur
         swidth=50;
         sheight=50;
     }
-       
-    SDL_Rect rect;
+
+     SDL_Rect rect;
     rect.x=0;
     rect.y=0;
     rect.h=swidth;
@@ -272,6 +272,82 @@ void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTextur
 	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL)	;	// 将纹理数据复制给渲染器
     SDL_RenderPresent(sdlRenderer);
     // SDL_Delay();
+
+}
+
+
+void showlabel(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTexture,int** cells,SDL_Surface *sdlsurface,SDL_Texture * texture,SDL_Rect dstrect){
+
+if(sdlRenderer==NULL){
+        printf("Renderer is NULL");
+        return;
+    }
+     if(sdlWindow==NULL){
+        printf("Window is NULL");
+        return;
+    }
+     if(sdlTexture==NULL){
+        printf("Texture is NULL");
+        return;
+    }
+     if(cells==NULL){
+        printf("World is NULL");
+        return;
+    }
+     int swidth=30;
+    int sheight=30;
+
+   if(High>20||Width>20){
+        swidth=10;
+        sheight=10;
+    }
+    if(High<10&&Width<10){
+        swidth=50;
+        sheight=50;
+    }
+  
+    SDL_Rect rect;
+    rect.x=0;
+    rect.y=50;
+    rect.h=swidth;
+    rect.w=sheight;
+    SDL_SetRenderTarget(sdlRenderer,sdlTexture); // 改变渲染目标为纹理
+    SDL_SetRenderDrawColor(sdlRenderer,255,255,255,255); // 设置纹理颜色(颜色为RGBA)
+    SDL_RenderClear(sdlRenderer); // 清空渲染器
+    for(int i=0;i<High;i++){
+        for(int j=0;j<Width;j++){
+            if(cells[i][j]==0){
+              
+          
+               SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
+               SDL_RenderFillRect(sdlRenderer, &rect);
+               SDL_SetRenderDrawColor(sdlRenderer, 100, 100, 100, 255);
+               SDL_RenderDrawRect(sdlRenderer, &rect);
+           
+               rect.x+=swidth;
+               
+            }
+            if(cells[i][j]==1){
+              
+                SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
+                SDL_RenderFillRect(sdlRenderer, &rect);
+                 SDL_SetRenderDrawColor(sdlRenderer, 100, 100, 100, 255);
+                 SDL_RenderDrawRect(sdlRenderer, &rect);
+       
+                 rect.x+=swidth;
+            }
+        }
+        rect.x=0;
+        rect.y+=sheight;
+    }
+     SDL_SetRenderTarget(sdlRenderer, NULL);		// 恢复默认渲染目标,将要渲染的目标设置为默认窗口
+	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL)	;	// 将纹理数据复制给渲染器
+    SDL_RenderCopy(sdlRenderer,texture,NULL,&dstrect);
+	SDL_FreeSurface(sdlsurface);/*释放surface*/
+	SDL_DestroyTexture(texture);/*释放纹理*/
+    SDL_RenderPresent(sdlRenderer);
+    // SDL_Delay();
+
 
 }
 
@@ -484,6 +560,8 @@ void  changecell(int **cell){
     close(sdlWindow,sdlTexture,sdlRenderer);
 
 }
+
+
 
 
 

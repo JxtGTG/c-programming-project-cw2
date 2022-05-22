@@ -8,7 +8,7 @@
 #include <SDL2/SDL.h>
 #include "operate.h"
 #include "game.h"
-
+#include <SDL2/SDL_ttf.h>
 
 extern int Width;
 extern int High;
