@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "windows.h": "c",
+        "sdl.h": "c",
+        "load_store.h": "c",
+        "sdl_ttf.h": "c",
+        "begin_code.h": "c",
+        "sdl_image.h": "c",
+        "stdbool.h": "c",
+        "game.h": "c"
+    },
+    "C_Cpp.dimInactiveRegions": false
+}

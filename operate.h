@@ -24,7 +24,7 @@ int **click_create();
 //function for the visualization of the world
 void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTexture,int** cells);
 
-
+//function for the visualization of the world
 void showlabel(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTexture,int** cells,SDL_Surface *sdlsurface,SDL_Texture * texture,SDL_Rect dstrect);
 //copy a world data to create a new world
 //return the newly created world pointer

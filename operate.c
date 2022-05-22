@@ -275,7 +275,7 @@ void show(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTextur
 
 }
 
-
+//function for the visualization of the world with ttf
 void showlabel(SDL_Renderer* sdlRenderer,SDL_Window* sdlWindow,SDL_Texture* sdlTexture,int** cells,SDL_Surface *sdlsurface,SDL_Texture * texture,SDL_Rect dstrect){
 
 if(sdlRenderer==NULL){
